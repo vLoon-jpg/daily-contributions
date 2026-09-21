@@ -1,0 +1,31 @@
+name: Daily Contribution
+
+on:
+  schedule:
+    # Runs every day at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  make-contribution:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update contribution log
+        run: |
+          echo "- Auto-commit on $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> README.md
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "vLoon-jpg"
+          git config user.email "crabmuck@gmail.com"
+          git add README.md
+          git commit -m "chore(daily): update activity log [$(date -u +'%Y-%m-%d')]" || exit 0
+          git push
