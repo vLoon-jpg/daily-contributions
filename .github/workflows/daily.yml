@@ -24,8 +24,14 @@ jobs:
 
       - name: Commit and push changes
         run: |
+          # Use the account's noreply address so commits always attribute to
+          # vLoon-jpg regardless of the account's email-privacy setting.
           git config user.name "vLoon-jpg"
-          git config user.email "crabmuck@gmail.com"
+          git config user.email "251421586+vLoon-jpg@users.noreply.github.com"
           git add README.md
-          git commit -m "chore(daily): update activity log [$(date -u +'%Y-%m-%d')]" || exit 0
+          if git diff --cached --quiet; then
+            echo "No changes to commit (README.md unchanged)."
+            exit 0
+          fi
+          git commit -m "chore(daily): update activity log [$(date -u +'%Y-%m-%d')]"
           git push
