@@ -1,0 +1,28 @@
+name: Verify contribution logic
+
+# Non-destructive CI check for the daily-contribution automation. It clones the
+# repo into a throwaway directory, runs the commit-generation logic in
+# --dry-run mode, and asserts exactly one valid commit is produced on the
+# expected date without pushing anything.
+#
+# Requires NO secrets and NO write permissions — it never touches a remote.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run non-destructive verification
+        run: bash scripts/verify.sh
